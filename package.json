@@ -1,0 +1,30 @@
+{
+  "name": "devops-cicd-project",
+  "version": "1.0.0",
+  "description": "Pipeline CI/CD avec GitHub Actions",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "jest",
+    "dev": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YaSOS15/devops-cicd-project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/YaSOS15/devops-cicd-project/issues"
+  },
+  "homepage": "https://github.com/YaSOS15/devops-cicd-project#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0",
+    "supertest": "^7.1.4"
+  }
+}
