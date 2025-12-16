@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article - DevBlog</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .article-header {
+            background: white;
+            padding: 3rem 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .article-title {
+            font-size: 3em;
+            color: var(--dark);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+            color: var(--gray);
+            font-size: 1.1em;
+            margin-bottom: 2rem;
+        }
+
+        .article-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .article-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .article-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+
+        .article-body {
+            background: white;
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+            font-size: 1.1em;
+        }
+
+        .article-body h1,
+        .article-body h2,
+        .article-body h3 {
+            color: var(--dark);
+            margin: 2rem 0 1rem;
+        }
+
+        .article-body p {
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .article-body code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .article-body pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        .article-body pre code {
+            background: none;
+            color: inherit;
+        }
+
+        .article-body blockquote {
+            border-left: 4px solid var(--primary);
+            padding-left: 1.5rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+            color: #666;
+        }
+
+        .article-body ul,
+        .article-body ol {
+            margin-left: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .article-body li {
+            margin-bottom: 0.5rem;
+        }
+
+        .article-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+
+        .tag {
+            background: #e3f2fd;
+            color: var(--primary);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        /* Comments Section */
+        .comments-section {
+            background: white;
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .comments-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .comment-form {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .comment-item {
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+            transition: background 0.3s;
+        }
+
+        .comment-item:last-child {
+            border-bottom: none;
+        }
+
+        .comment-item:hover {
+            background: #f8f9fa;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .comment-author {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.1em;
+        }
+
+        .comment-date {
+            color: var(--gray);
+            font-size: 0.9em;
+        }
+
+        .comment-content {
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .like-btn {
+            background: none;
+            border: 2px solid var(--danger);
+            color: var(--danger);
+            padding: 10px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .like-btn:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .like-btn.liked {
+            background: var(--danger);
+            color: white;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 2rem;
+            padding: 10px 20px;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .article-title {
+                font-size: 2em;
+            }
+
+            .article-body {
+                padding: 1.5rem;
+            }
+
+            .article-image {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="logo">📚 DevBlog</a>
+            <ul class="nav-links">
+                <li><a href="/">Accueil</a></li>
+                <li><a href="/admin">Admin</a></li>
+                <li><a href="/create">✍️ Écrire</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="/" class="back-btn">← Retour aux articles</a>
+
+        <div id="articleContent">
+            <div class="loading">⏳ Chargement de l'article...</div>
+        </div>
+
+        <!-- Comments Section -->
+        <div class="comments-section" id="commentsSection" style="display: none;">
+            <div class="comments-header">
+                <h2>💬 Commentaires (<span id="commentCount">0</span>)</h2>
+            </div>
+
+            <!-- Comment Form -->
+            <div class="comment-form">
+                <h3>Ajouter un commentaire</h3>
+                <form id="commentForm">
+                    <div class="form-group">
+                        <label for="commentAuthor">Nom *</label>
+                        <input type="text" id="commentAuthor" required placeholder="Votre nom">
+                    </div>
+                    <div class="form-group">
+                        <label for="commentContent">Commentaire *</label>
+                        <textarea id="commentContent" required placeholder="Votre commentaire..." rows="4"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Publier le commentaire</button>
+                </form>
+            </div>
+
+            <!-- Comments List -->
+            <div id="commentsList"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentArticleId = null;
+
+        // Charger l'article au démarrage
+        document.addEventListener('DOMContentLoaded', () => {
+            const slug = window.location.pathname.split('/').pop();
+            loadArticle(slug);
+        });
+
+        // Charger l'article
+        async function loadArticle(slug) {
+            try {
+                const response = await fetch(`/api/articles/${slug}`);
+                
+                if (!response.ok) {
+                    throw new Error('Article non trouvé');
+                }
+                
+                const article = await response.json();
+                currentArticleId = article._id;
+                
+                displayArticle(article);
+                loadComments(article._id);
+                
+                document.getElementById('commentsSection').style.display = 'block';
+            } catch (error) {
+                console.error('Erreur:', error);
+                document.getElementById('articleContent').innerHTML = `
+                    <div class="card">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">❌</div>
+                            <h2>Article non trouvé</h2>
+                            <p>Cet article n'existe pas ou a été supprimé.</p>
+                            <a href="/" class="btn btn-primary">Retour à l'accueil</a>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Afficher l'article
+        function displayArticle(article) {
+            const container = document.getElementById('articleContent');
+            
+            container.innerHTML = `
+                <div class="article-header">
+                    <h1 class="article-title">${article.title}</h1>
+                    <div class="article-meta">
+                        <span class="article-meta-item">
+                            <span class="badge badge-primary">${article.category}</span>
+                        </span>
+                        <span class="article-meta-item">
+                            📅 ${new Date(article.createdAt).toLocaleDateString('fr-FR', { 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric' 
+                            })}
+                        </span>
+                        <span class="article-meta-item">✍️ ${article.author}</span>
+                        <span class="article-meta-item">👁️ ${article.views} vues</span>
+                        <span class="article-meta-item">❤️ <span id="likesCount">${article.likes}</span> likes</span>
+                    </div>
+                    <div class="article-actions">
+                        <button class="like-btn" onclick="likeArticle()">
+                            ❤️ J'aime
+                        </button>
+                    </div>
+                </div>
+
+                <img src="${article.imageUrl}" alt="${article.title}" class="article-image">
+
+                <div class="article-body">
+                    ${formatContent(article.content)}
+                </div>
+
+                ${article.tags && article.tags.length > 0 ? `
+                    <div class="card">
+                        <h3>🏷️ Tags</h3>
+                        <div class="article-tags">
+                            ${article.tags.map(tag => `<span class="tag">#${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+            `;
+        }
+
+        // Formater le contenu (simple conversion de retours à la ligne)
+        function formatContent(content) {
+            return content
+                .split('\n\n')
+                .map(paragraph => `<p>${paragraph.replace(/\n/g, '<br>')}</p>`)
+                .join('');
+        }
+
+        // Liker un article
+        async function likeArticle() {
+            try {
+                const response = await fetch(`/api/articles/${currentArticleId}/like`, {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('likesCount').textContent = data.likes;
+                    
+                    const btn = document.querySelector('.like-btn');
+                    btn.classList.add('liked');
+                    btn.textContent = '❤️ Aimé';
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+
+        // Charger les commentaires
+        async function loadComments(articleId) {
+            try {
+                const response = await fetch(`/api/comments/article/${articleId}`);
+                const comments = await response.json();
+                
+                displayComments(comments);
+                document.getElementById('commentCount').textContent = comments.length;
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+
+        // Afficher les commentaires
+        function displayComments(comments) {
+            const container = document.getElementById('commentsList');
+            
+            if (comments.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>Aucun commentaire pour le moment. Soyez le premier à commenter !</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = comments.map(comment => `
+                <div class="comment-item">
+                    <div class="comment-header">
+                        <span class="comment-author">👤 ${comment.author}</span>
+                        <span class="comment-date">
+                            ${new Date(comment.createdAt).toLocaleDateString('fr-FR', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })}
+                        </span>
+                    </div>
+                    <div class="comment-content">${comment.content}</div>
+                </div>
+            `).join('');
+        }
+
+        // Soumettre un commentaire
+        document.getElementById('commentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const comment = {
+                articleId: currentArticleId,
+                author: document.getElementById('commentAuthor').value,
+                content: document.getElementById('commentContent').value
+            };
+
+            try {
+                const response = await fetch('/api/comments', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(comment)
+                });
+
+                if (response.ok) {
+                    document.getElementById('commentForm').reset();
+                    loadComments(currentArticleId);
+                    alert('✅ Commentaire publié avec succès !');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('❌ Erreur lors de la publication du commentaire');
+            }
+        });
+    </script>
+</body>
+</html>

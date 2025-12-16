@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - DevBlog</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .admin-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .admin-header h1 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-card-icon {
+            font-size: 3em;
+            margin-bottom: 1rem;
+        }
+
+        .stat-card-number {
+            font-size: 3em;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card-label {
+            color: var(--gray);
+            font-size: 1.1em;
+        }
+
+        .articles-table {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        tbody tr {
+            transition: background 0.3s;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .article-title-cell {
+            max-width: 300px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 0.9em;
+        }
+
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .status-published {
+            background: #e8f5e9;
+            color: var(--success);
+        }
+
+        .status-draft {
+            background: #fff3e0;
+            color: var(--warning);
+        }
+
+        .filter-section {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-section select,
+        .filter-section input {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        @media (max-width: 768px) {
+            .admin-stats {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 0.9em;
+            }
+
+            .btn-small {
+                padding: 6px 12px;
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="logo">📚 DevBlog</a>
+            <ul class="nav-links">
+                <li><a href="/">Accueil</a></li>
+                <li><a href="/admin">Admin</a></li>
+                <li><a href="/create">✍️ Écrire</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="admin-header">
+            <h1>⚙️ Dashboard Admin</h1>
+            <p>Gérez tous vos articles depuis cette interface</p>
+        </div>
+
+        <!-- Statistics -->
+        <div class="admin-stats">
+            <div class="stat-card">
+                <div class="stat-card-icon">📝</div>
+                <div class="stat-card-number" id="totalArticles">0</div>
+                <div class="stat-card-label">Total Articles</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-icon">✅</div>
+                <div class="stat-card-number" id="publishedArticles">0</div>
+                <div class="stat-card-label">Publiés</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-icon">📋</div>
+                <div class="stat-card-number" id="draftArticles">0</div>
+                <div class="stat-card-label">Brouillons</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-icon">👁️</div>
+                <div class="stat-card-number" id="totalViews">0</div>
+                <div class="stat-card-label">Total Vues</div>
+            </div>
+        </div>
+
+        <!-- Articles Table -->
+        <div class="articles-table">
+            <div class="table-header">
+                <h2>📚 Gestion des Articles</h2>
+                <div class="table-actions">
+                    <a href="/create" class="btn btn-success">➕ Nouvel Article</a>
+                    <button class="btn btn-secondary" onclick="loadArticles()">🔄 Actualiser</button>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filter-section">
+                <select id="categoryFilter" onchange="filterArticles()">
+                    <option value="">Toutes les catégories</option>
+                    <option value="Technologie">Technologie</option>
+                    <option value="DevOps">DevOps</option>
+                    <option value="Programmation">Programmation</option>
+                    <option value="Cloud">Cloud</option>
+                    <option value="Sécurité">Sécurité</option>
+                </select>
+
+                <select id="statusFilter" onchange="filterArticles()">
+                    <option value="">Tous les statuts</option>
+                    <option value="published">Publiés</option>
+                    <option value="draft">Brouillons</option>
+                </select>
+
+                <input type="text" id="searchFilter" placeholder="Rechercher..." onkeyup="filterArticles()">
+            </div>
+
+            <!-- Table -->
+            <div id="tableContainer">
+                <div class="loading">⏳ Chargement des articles...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allArticles = [];
+
+        // Charger au démarrage
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStats();
+            loadArticles();
+        });
+
+        // Charger les stats
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/articles/stats');
+                const stats = await response.json();
+                
+                document.getElementById('totalArticles').textContent = stats.total;
+                document.getElementById('publishedArticles').textContent = stats.published;
+                document.getElementById('draftArticles').textContent = stats.draft;
+                document.getElementById('totalViews').textContent = stats.totalViews;
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+
+        // Charger tous les articles
+        async function loadArticles() {
+            try {
+                const response = await fetch('/api/articles?limit=1000');
+                const data = await response.json();
+                allArticles = data.articles;
+                displayArticles(allArticles);
+            } catch (error) {
+                console.error('Erreur:', error);
+                document.getElementById('tableContainer').innerHTML = 
+                    '<div class="empty-state">❌ Erreur de chargement</div>';
+            }
+        }
+
+        // Afficher les articles
+        function displayArticles(articles) {
+            const container = document.getElementById('tableContainer');
+            
+            if (articles.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <h3>Aucun article</h3>
+                        <p>Commencez par créer votre premier article</p>
+                        <a href="/create" class="btn btn-primary">Créer un article</a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Titre</th>
+                            <th>Catégorie</th>
+                            <th>Auteur</th>
+                            <th>Statut</th>
+                            <th>Vues</th>
+                            <th>Likes</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${articles.map(article => `
+                            <tr>
+                                <td class="article-title-cell">${article.title}</td>
+                                <td><span class="badge badge-primary">${article.category}</span></td>
+                                <td>${article.author}</td>
+                                <td>
+                                    <span class="status-badge ${article.published ? 'status-published' : 'status-draft'}">
+                                        ${article.published ? '✅ Publié' : '📋 Brouillon'}
+                                    </span>
+                                </td>
+                                <td>👁️ ${article.views}</td>
+                                <td>❤️ ${article.likes}</td>
+                                <td>${new Date(article.createdAt).toLocaleDateString('fr-FR')}</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-primary btn-small" onclick="viewArticle('${article.slug}')">
+                                            👁️ Voir
+                                        </button>
+                                        <button class="btn btn-secondary btn-small" onclick="editArticle('${article._id}')">
+                                            ✏️ Modifier
+                                        </button>
+                                        <button class="btn btn-danger btn-small" onclick="deleteArticle('${article._id}', '${article.title}')">
+                                            🗑️ Supprimer
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        // Filtrer les articles
+        function filterArticles() {
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
+
+            let filtered = allArticles.filter(article => {
+                const matchCategory = !categoryFilter || article.category === categoryFilter;
+                const matchStatus = !statusFilter || 
+                    (statusFilter === 'published' && article.published) ||
+                    (statusFilter === 'draft' && !article.published);
+                const matchSearch = !searchFilter || 
+                    article.title.toLowerCase().includes(searchFilter) ||
+                    article.content.toLowerCase().includes(searchFilter);
+
+                return matchCategory && matchStatus && matchSearch;
+            });
+
+            displayArticles(filtered);
+        }
+
+        // Voir un article
+        function viewArticle(slug) {
+            window.location.href = `/article/${slug}`;
+        }
+
+        // Modifier un article
+        function editArticle(id) {
+            window.location.href = `/edit/${id}`;
+        }
+
+        // Supprimer un article
+        async function deleteArticle(id, title) {
+            if (!confirm(`Êtes-vous sûr de vouloir supprimer l'article "${title}" ?\n\nCette action est irréversible.`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/articles/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    alert('✅ Article supprimé avec succès !');
+                    loadStats();
+                    loadArticles();
+                } else {
+                    alert('❌ Erreur lors de la suppression');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('❌ Erreur lors de la suppression');
+            }
+        }
+    </script>
+</body>
+</html>
