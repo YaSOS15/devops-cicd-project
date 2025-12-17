@@ -3,108 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevOps CI/CD Project</title>
+    <title>ShopCI/CD - E-Commerce</title>
+    <link rel="stylesheet" href="/styles.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.95), rgba(118, 75, 162, 0.95)),
+                        url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200') center/cover;
+            color: white;
+            padding: 5rem 2rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            border-radius: 0 0 30px 30px;
         }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+
+        .hero h1 {
+            font-size: 3.5em;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
-        .container {
+
+        .hero p {
+            font-size: 1.3em;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        /* Search and Filters */
+        .search-filter-section {
             background: white;
-            border-radius: 20px;
-            padding: 50px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 600px;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filters select {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        /* Categories */
+        .categories {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .category-btn {
+            padding: 10px 25px;
+            background: white;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            border-radius: 25px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .category-btn:hover,
+        .category-btn.active {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Featured Products */
+        .section-title {
+            font-size: 2em;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
             text-align: center;
         }
-        h1 {
-            color: #667eea;
-            margin-bottom: 20px;
-            font-size: 2.5em;
-        }
-        .badge {
-            display: inline-block;
-            background: #28a745;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            margin: 10px 5px;
-            font-size: 0.9em;
-        }
-        .info {
-            margin: 30px 0;
-            line-height: 1.8;
-            color: #555;
-        }
-        .links {
-            margin-top: 30px;
-        }
-        .btn {
-            display: inline-block;
-            background: #667eea;
-            color: white;
-            padding: 12px 30px;
-            border-radius: 25px;
-            text-decoration: none;
-            margin: 10px;
-            transition: transform 0.2s;
-        }
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-        .status {
-            margin: 20px 0;
-            padding: 15px;
-            background: #f0f0f0;
-            border-radius: 10px;
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2em;
+            }
+
+            .hero p {
+                font-size: 1em;
+            }
+
+            .filters {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="logo">🛒 Crital SHOP</a>
+            <ul class="nav-links">
+                <li><a href="/">🏠 Accueil</a></li>
+                <li><a href="/cart">🛒 Panier <span class="cart-badge" id="cartCount">0</span></a></li>
+                <li><a href="/orders">📦 Commandes</a></li>
+                <li><a href="/admin">⚙️ Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>🛍️ Bienvenue à Cristal SHOP</h1>
+        <p>Découvrez nos produits pour votre plaisir</p>
+        <button class="btn btn-primary" onclick="document.getElementById('products').scrollIntoView({ behavior: 'smooth' })">
+            Explorer les Produits →
+        </button>
+    </section>
+
     <div class="container">
-        <h1>🚀 DevOps CI/CD Project</h1>
-        
-        <div class="badges">
-            <span class="badge">✅ Build Passing</span>
-            <span class="badge">🐳 Docker</span>
-            <span class="badge">⚡ CI/CD</span>
+        <!-- Search and Filters -->
+        <div class="search-filter-section">
+            <div class="search-bar">
+                <input type="text" id="searchInput" class="search-input" placeholder="Rechercher un produit...">
+                <button class="btn btn-primary" onclick="loadProducts()">🔍 Rechercher</button>
+            </div>
+
+            <div class="filters">
+                <select id="categoryFilter" onchange="loadProducts()">
+                    <option value="">Toutes les catégories</option>
+                    <option value="Électronique">📱 Électronique</option>
+                    <option value="Vêtements">👕 Vêtements</option>
+                    <option value="Livres">📚 Livres</option>
+                    <option value="Maison">🏠 Maison</option>
+                    <option value="Sport">⚽ Sport</option>
+                </select>
+
+                <select id="sortFilter" onchange="loadProducts()">
+                    <option value="">Trier par...</option>
+                    <option value="price-asc">Prix croissant</option>
+                    <option value="price-desc">Prix décroissant</option>
+                    <option value="name">Nom A-Z</option>
+                </select>
+
+                <input type="number" id="minPrice" placeholder="Prix min" style="width: 120px; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                <input type="number" id="maxPrice" placeholder="Prix max" style="width: 120px; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                <button class="btn btn-secondary" onclick="loadProducts()">Filtrer</button>
+            </div>
         </div>
-        
-        <div class="info">
-            <p><strong>Pipeline CI/CD automatisé avec GitHub Actions</strong></p>
-            <p>Application Node.js déployée automatiquement</p>
-        </div>
-        
-        <div class="status">
-            <h3>🎯 Statut du Projet</h3>
-            <p>✅ Tests automatisés</p>
-            <p>✅ Image Docker publiée</p>
-            <p>✅ Déploiement automatique</p>
-        </div>
-        
-        <div class="links">
-            <a href="https://github.com/YaSOS15/devops-cicd-project" class="btn" target="_blank">
-                📂 Voir sur GitHub
-            </a>
-            <a href="https://hub.docker.com" class="btn" target="_blank">
-                🐳 Docker Hub
-            </a>
-        </div>
-        
-        <p style="margin-top: 30px; color: #888; font-size: 0.9em;">
-            Déployé automatiquement via GitHub Actions
-        </p>
+
+        <!-- Featured Products -->
+        <section id="featured" style="margin-bottom: 3rem;">
+            <h2 class="section-title">⭐ Produits Vedettes</h2>
+            <div id="featuredProducts" class="products-grid">
+                <div class="loading">⏳ Chargement des produits vedettes...</div>
+            </div>
+        </section>
+
+        <!-- All Products -->
+        <section id="products">
+            <h2 class="section-title">🛍️ Tous nos Produits</h2>
+            <div id="allProducts" class="products-grid">
+                <div class="loading">⏳ Chargement des produits...</div>
+            </div>
+        </section>
     </div>
+
+    <script>
+        // Charger au démarrage
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFeaturedProducts();
+            loadProducts();
+            updateCartCount();
+        });
+
+        // Charger les produits vedettes
+        async function loadFeaturedProducts() {
+            try {
+                const response = await fetch('/api/products/featured');
+                const products = await response.json();
+                displayFeaturedProducts(products);
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+
+        // Afficher les produits vedettes
+        function displayFeaturedProducts(products) {
+            const container = document.getElementById('featuredProducts');
+            
+            if (products.length === 0) {
+                container.innerHTML = '<div class="empty-state">Aucun produit vedette</div>';
+                return;
+            }
+
+            container.innerHTML = products.map(product => createProductCard(product)).join('');
+        }
+
+        // Charger tous les produits
+        async function loadProducts() {
+            try {
+                const category = document.getElementById('categoryFilter').value;
+                const search = document.getElementById('searchInput').value;
+                const sort = document.getElementById('sortFilter').value;
+                const minPrice = document.getElementById('minPrice').value;
+                const maxPrice = document.getElementById('maxPrice').value;
+
+                let url = '/api/products?';
+                if (category) url += `category=${category}&`;
+                if (search) url += `search=${search}&`;
+                if (sort) url += `sort=${sort}&`;
+                if (minPrice) url += `minPrice=${minPrice}&`;
+                if (maxPrice) url += `maxPrice=${maxPrice}&`;
+
+                const response = await fetch(url);
+                const products = await response.json();
+                displayAllProducts(products);
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+
+        // Afficher tous les produits
+        function displayAllProducts(products) {
+            const container = document.getElementById('allProducts');
+            
+            if (products.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <h3>Aucun produit trouvé</h3>
+                        <p>Essayez de modifier vos filtres</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = products.map(product => createProductCard(product)).join('');
+        }
+
+        // Créer une carte produit
+        function createProductCard(product) {
+    const inStock = product.stock > 0;
+    return `
+        <div class="product-card" onclick="window.location.href='/product/${product._id}'">
+            <img src="/images/${product.image || 'default.jpg'}" alt="${product.name}" class="product-image">
+            <div class="product-content">
+                <div class="product-category">${product.category}</div>
+                <h3 class="product-title">${product.name}</h3>
+                <div class="product-price">${product.price.toFixed(2)} F CFA</div>
+                <div class="product-footer">
+                    <div class="product-rating">
+                        ${'⭐'.repeat(Math.round(product.rating))}
+                        <span>(${product.numReviews})</span>
+                    </div>
+                    <span class="badge ${inStock ? 'badge-success' : 'badge-danger'}">
+                        ${inStock ? `${product.stock} en stock` : 'Épuisé'}
+                    </span>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+
+        // Mettre à jour le compteur du panier
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+
+        // Search on Enter
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                loadProducts();
+            }
+        });
+    </script>
 </body>
 </html>

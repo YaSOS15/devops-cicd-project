@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - ShopCI/CD</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .stat-icon {
+            font-size: 3em;
+            margin-bottom: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 1em;
+        }
+
+        .admin-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        tbody tr {
+            transition: background 0.3s;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .product-name-cell {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 0.9em;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .tab-btn {
+            padding: 12px 30px;
+            background: white;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .tab-btn:hover,
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .admin-stats {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 0.9em;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="logo">🛒 Cristal SHOP</a>
+            <ul class="nav-links">
+                <li><a href="/">🏠 Accueil</a></li>
+                <li><a href="/cart">🛒 Panier <span class="cart-badge" id="cartCount">0</span></a></li>
+                <li><a href="/orders">📦 Commandes</a></li>
+                <li><a href="/admin">⚙️ Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 style="margin-bottom: 2rem;">⚙️ Administrateur</h1>
+
+        <!-- Statistics -->
+        <div class="admin-stats">
+            <div class="stat-card">
+                <div class="stat-icon">📦</div>
+                <div class="stat-number" id="totalProducts">0</div>
+                <div class="stat-label">Total Produits</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-number" id="inStock">0</div>
+                <div class="stat-label">En Stock</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🛒</div>
+                <div class="stat-number" id="totalOrders">0</div>
+                <div class="stat-label">Commandes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-number" id="totalRevenue">0 F CFA</div>
+                <div class="stat-label">Chiffre d'Affaires</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('products')">📦 Produits</button>
+            <button class="tab-btn" onclick="switchTab('orders')">🛒 Commandes</button>
+        </div>
+
+        <!-- Products Tab -->
+        <div id="productsTab" class="tab-content active">
+            <div class="admin-section">
+                <div class="section-header">
+                    <h2>📦 Gestion des Produits</h2>
+                    <div style="display: flex; gap: 1rem;">
+                        <a href="/admin/add-product" class="btn btn-success">➕ Nouveau Produit</a>
+                        <button class="btn btn-secondary" onclick="loadProducts()">🔄 Actualiser</button>
+                    </div>
+                </div>
+
+                <div id="productsContainer">
+                    <div class="loading">⏳ Chargement...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders Tab -->
+        <div id="ordersTab" class="tab-content">
+            <div class="admin-section">
+                <div class="section-header">
+                    <h2>🛒 Gestion des Commandes</h2>
+                    <button class="btn btn-secondary" onclick="loadOrders()">🔄 Actualiser</button>
+                </div>
+
+                <div id="ordersContainer">
+                    <div class="loading">⏳ Chargement...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStats();
+            loadProducts();
+            loadOrders();
+            updateCartCount();
+        });
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tab + 'Tab').classList.add('active');
+        }
+
+        async function loadStats() {
+            try {
+                const [productsStats, ordersStats] = await Promise.all([
+                    fetch('/api/products/stats').then(r => r.json()),
+                    fetch('/api/orders/stats').then(r => r.json())
+                ]);
+
+                document.getElementById('totalProducts').textContent = productsStats.total;
+                document.getElementById('inStock').textContent = productsStats.inStock;
+                document.getElementById('totalOrders').textContent = ordersStats.total;
+                document.getElementById('totalRevenue').textContent = ordersStats.totalRevenue.toFixed(2) + ' F CFA';
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+
+        async function loadProducts() {
+            try {
+                const response = await fetch('/api/products');
+                const products = await response.json();
+                displayProducts(products);
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+
+        function displayProducts(products) {
+            const container = document.getElementById('productsContainer');
+
+            if (products.length === 0) {
+                container.innerHTML = '<div class="empty-state">Aucun produit</div>';
+                return;
+            }
+
+            container.innerHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Produit</th>
+                            <th>Catégorie</th>
+                            <th>Prix</th>
+                            <th>Stock</th>
+                            <th>Note</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${products.map(product => `
+                            <tr>
+                                <td class="product-name-cell">${product.name}</td>
+                                <td><span class="badge badge-primary">${product.category}</span></td>
+                                <td>${product.price.toFixed(2)} F CFA</td>
+                                <td>
+                                    <span class="badge ${product.stock > 0 ? 'badge-success' : 'badge-danger'}">
+                                        ${product.stock}
+                                    </span>
+                                </td>
+                                <td>${'⭐'.repeat(Math.round(product.rating))} (${product.numReviews})</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-primary btn-small" onclick="window.location.href='/product/${product._id}'">
+                                            👁️
+                                        </button>
+                                        <button class="btn btn-secondary btn-small" onclick="window.location.href='/admin/edit-product/${product._id}'">
+                                            ✏️
+                                        </button>
+                                        <button class="btn btn-danger btn-small" onclick="deleteProduct('${product._id}', '${product.name}')">
+                                            🗑️
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        async function deleteProduct(id, name) {
+            if (!confirm(`Supprimer le produit "${name}" ?`)) return;
+
+            try {
+                const response = await fetch(`/api/products/${id}`, { method: 'DELETE' });
+                if (response.ok) {
+                    alert('✅ Produit supprimé');
+                    
+loadProducts();
+                loadStats();
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+            alert('❌ Erreur lors de la suppression');
+        }
+    }
+
+    async function loadOrders() {
+        try {
+            const response = await fetch('/api/orders');
+            const orders = await response.json();
+            displayOrders(orders);
+        } catch (error) {
+            console.error('Erreur:', error);
+        }
+    }
+
+    function displayOrders(orders) {
+        const container = document.getElementById('ordersContainer');
+
+        if (orders.length === 0) {
+            container.innerHTML = '<div class="empty-state">Aucune commande</div>';
+            return;
+        }
+
+        container.innerHTML = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Numéro</th>
+                        <th>Client</th>
+                        <th>Articles</th>
+                        <th>Total</th>
+                        <th>Statut</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${orders.map(order => `
+                        <tr>
+                            <td style="font-weight: 600;">${order.orderNumber}</td>
+                            <td>${order.customerName}</td>
+                            <td>${order.items.length} article(s)</td>
+                            <td style="font-weight: bold; color: var(--primary);">${order.totalAmount.toFixed(2)} F CFA</td>
+                            <td>
+                                <select onchange="updateOrderStatus('${order._id}', this.value)" class="badge">
+                                    ${['En attente', 'Confirmée', 'Expédiée', 'Livrée', 'Annulée'].map(status => 
+                                        `<option value="${status}" ${status === order.status ? 'selected' : ''}>${status}</option>`
+                                    ).join('')}
+                                </select>
+                            </td>
+                            <td>${new Date(order.createdAt).toLocaleDateString('fr-FR')}</td>
+                            <td>
+                                <button class="btn btn-danger btn-small" onclick="deleteOrder('${order._id}')">
+                                    🗑️
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+
+    async function updateOrderStatus(id, status) {
+        try {
+            const response = await fetch(`/api/orders/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status })
+            });
+
+            if (response.ok) {
+                alert('✅ Statut mis à jour');
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+            alert('❌ Erreur');
+        }
+    }
+
+    async function deleteOrder(id) {
+        if (!confirm('Supprimer cette commande ?')) return;
+
+        try {
+            const response = await fetch(`/api/orders/${id}`, { method: 'DELETE' });
+            if (response.ok) {
+                alert('✅ Commande supprimée');
+                loadOrders();
+                loadStats();
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+            alert('❌ Erreur');
+        }
+    }
+
+    function updateCartCount() {
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+        document.getElementById('cartCount').textContent = count;
+    }
+</script>
+</body>
+</html>

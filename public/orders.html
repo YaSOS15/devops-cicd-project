@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Commandes - ShopCI/CD</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .orders-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .order-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #eee;
+        }
+
+        .order-number {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: var(--dark);
+        }
+
+        .order-date {
+            color: var(--gray);
+        }
+
+        .order-items {
+            margin-bottom: 1.5rem;
+        }
+
+        .order-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-item-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .order-item-info {
+            flex: 1;
+        }
+
+        .order-item-name {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .order-item-details {
+            color: var(--gray);
+            font-size: 0.9em;
+        }
+
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 2px solid #eee;
+        }
+
+        .order-total {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .status-badge {
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .status-pending {
+            background: #fff3e0;
+            color: var(--warning);
+        }
+
+        .status-confirmed {
+            background: #e3f2fd;
+            color: var(--primary);
+        }
+
+        .status-shipped {
+            background: #e8f5e9;
+            color: var(--success);
+        }
+
+        .status-delivered {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+
+        .status-cancelled {
+            background: #ffebee;
+            color: var(--danger);
+        }
+
+        @media (max-width: 768px) {
+            .order-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .order-footer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="logo">🛒 Cristal SHOP</a>
+            <ul class="nav-links">
+                <li><a href="/">🏠 Accueil</a></li>
+                <li><a href="/cart">🛒 Panier <span class="cart-badge" id="cartCount">0</span></a></li>
+                <li><a href="/orders">📦 Commandes</a></li>
+                <li><a href="/admin">⚙️ Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container orders-container">
+        <h1 style="margin-bottom: 2rem;">📦 Mes Commandes</h1>
+
+        <div id="ordersContainer">
+            <div class="loading">⏳ Chargement des commandes...</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadOrders();
+            updateCartCount();
+        });
+
+        async function loadOrders() {
+            try {
+                const response = await fetch('/api/orders');
+                const orders = await response.json();
+                displayOrders(orders);
+            } catch (error) {
+                console.error('Erreur:', error);
+                document.getElementById('ordersContainer').innerHTML = `
+                    <div class="card">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">❌</div>
+                            <h3>Erreur de chargement</h3>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function displayOrders(orders) {
+            const container = document.getElementById('ordersContainer');
+
+            if (orders.length === 0) {
+                container.innerHTML = `
+                    <div class="card">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📦</div>
+                            <h3>Aucune commande</h3>
+                            <p>Vous n'avez pas encore passé de commande</p>
+                            <a href="/" class="btn btn-primary">Découvrir nos produits</a>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = orders.map(order => {
+                const statusClass = {
+                    'En attente': 'status-pending',
+                    'Confirmée': 'status-confirmed',
+                    'Expédiée': 'status-shipped',
+                    'Livrée': 'status-delivered',
+                    'Annulée': 'status-cancelled'
+                }[order.status] || 'status-pending';
+
+                return `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div>
+                                <div class="order-number">Commande ${order.orderNumber}</div>
+                                <div class="order-date">
+                                    📅 ${new Date(order.createdAt).toLocaleDateString('fr-FR', {
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                    })}
+                                </div>
+                            </div>
+                            <span class="status-badge ${statusClass}">${order.status}</span>
+                        </div>
+
+                        <div class="order-items">
+                            ${order.items.map(item => `
+                                <div class="order-item">
+                                    <div class="order-item-info">
+                                        <div class="order-item-name">${item.name}</div>
+                                        <div class="order-item-details">
+                                            Quantité: ${item.quantity} × ${item.price.toFixed(2)} F CFA = ${(item.quantity * item.price).toFixed(2)} F CFA
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="order-footer">
+                            <div>
+                                <div style="color: var(--gray); font-size: 0.9em; margin-bottom: 0.25rem;">
+                                    📍 Livraison à ${order.shippingAddress.city}
+                                </div>
+                                <div style="color: var(--gray); font-size: 0.9em;">
+                                    💳 ${order.paymentMethod}
+                                </div>
+                            </div>
+                            <div class="order-total">Total: ${order.totalAmount.toFixed(2)} F CFA</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+    </script>
+</body>
+</html>

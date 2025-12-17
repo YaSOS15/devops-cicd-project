@@ -21,7 +21,12 @@
   },
   "homepage": "https://github.com/YaSOS15/devops-cicd-project#readme",
   "dependencies": {
-    "express": "^5.2.1"
+    "connect-mongo": "^6.0.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "express-session": "^1.18.2",
+    "marked": "^17.0.1",
+    "mongoose": "^9.0.1"
   },
   "devDependencies": {
     "jest": "^30.2.0",
