@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produit - ShopCI/CD</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .product-detail {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .product-images {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .main-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 1rem;
+        }
+
+        .thumbnail-images {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .thumbnail {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: border-color 0.3s;
+        }
+
+        .thumbnail:hover,
+        .thumbnail.active {
+            border-color: var(--primary);
+        }
+
+        .product-info h1 {
+            font-size: 2.5em;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.2em;
+        }
+
+        .product-price {
+            font-size: 3em;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .product-description {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .product-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .meta-item {
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .meta-label {
+            font-size: 0.9em;
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+        }
+
+        .meta-value {
+            font-weight: bold;
+            color: var(--dark);
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .quantity-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--primary);
+            background: white;
+            color: var(--primary);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .quantity-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .quantity-input {
+            width: 80px;
+            text-align: center;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .action-buttons .btn {
+            flex: 1;
+        }
+
+        /* Reviews Section */
+        .reviews-section {
+            background: white;
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-top: 3rem;
+        }
+
+        .reviews-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .review-form {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .rating-input {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .star-btn {
+            font-size: 2em;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #ddd;
+            transition: color 0.3s;
+        }
+
+        .star-btn:hover,
+        .star-btn.active {
+            color: var(--warning);
+        }
+
+        .review-item {
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .review-item:last-child {
+            border-bottom: none;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .review-author {
+            font-weight: bold;
+            color: var(--dark);
+        }
+
+        .review-rating {
+            color: var(--warning);
+        }
+
+        .review-date {
+            color: var(--gray);
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 1024px) {
+            .product-detail {
+                grid-template-columns: 1fr;
+            }
+
+            .product-images {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="logo">🛒 Cristal SHOP</a>
+            <ul class="nav-links">
+                <li><a href="/">🏠 Accueil</a></li>
+                <li><a href="/cart">🛒 Panier <span class="cart-badge" id="cartCount">0</span></a></li>
+                <li><a href="/orders">📦 Commandes</a></li>
+                <li><a href="/admin">⚙️ Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="/" class="btn btn-outline" style="margin-bottom: 2rem;">← Retour aux produits</a>
+
+        <div id="productContainer">
+            <div class="loading">⏳ Chargement du produit...</div>
+        </div>
+
+        <!-- Reviews Section -->
+        <div class="reviews-section" id="reviewsSection" style="display: none;">
+            <div class="reviews-header">
+                <h2>⭐ Avis Clients (<span id="reviewCount">0</span>)</h2>
+            </div>
+
+            <!-- Review Form -->
+            <div class="review-form">
+                <h3>Laisser un avis</h3>
+                <form id="reviewForm">
+                    <div class="form-group">
+                        <label>Note *</label>
+                        <div class="rating-input" id="ratingInput">
+                            <button type="button" class="star-btn" data-rating="1">★</button>
+                            <button type="button" class="star-btn" data-rating="2">★</button>
+                            <button type="button" class="star-btn" data-rating="3">★</button>
+                            <button type="button" class="star-btn" data-rating="4">★</button>
+                            <button type="button" class="star-btn" data-rating="5">★</button>
+                        </div>
+                        <input type="hidden" id="rating" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerName">Nom *</label>
+                        <input type="text" id="customerName" required placeholder="Votre nom">
+                    </div>
+                    <div class="form-group">
+                        <label for="comment">Commentaire *</label>
+                        <textarea id="comment" required placeholder="Partagez votre expérience..." rows="4"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Publier l'avis</button>
+                </form>
+            </div>
+
+            <!-- Reviews List -->
+            <div id="reviewsList"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentProduct = null;
+        let selectedRating = 0;
+
+        // Charger le produit
+        document.addEventListener('DOMContentLoaded', () => {
+            const productId = window.location.pathname.split('/').pop();
+            loadProduct(productId);
+            updateCartCount();
+        });
+
+        // Rating stars
+        document.querySelectorAll('.star-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                selectedRating = parseInt(this.dataset.rating);
+                document.getElementById('rating').value = selectedRating;
+                
+                document.querySelectorAll('.star-btn').forEach((star, index) => {
+                    if (index < selectedRating) {
+                        star.classList.add('active');
+                    } else {
+                        star.classList.remove('active');
+                    }
+                });
+            });
+        });
+
+        async function loadProduct(id) {
+            try {
+                const response = await fetch(`/api/products/${id}`);
+                if (!response.ok) throw new Error('Produit non trouvé');
+                
+                currentProduct = await response.json();
+                displayProduct(currentProduct);
+                loadReviews(id);
+                
+                document.getElementById('reviewsSection').style.display = 'block';
+            } catch (error) {
+                console.error('Erreur:', error);
+                document.getElementById('productContainer').innerHTML = `
+                    <div class="card">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">❌</div>
+                            <h2>Produit non trouvé</h2>
+                            <a href="/" class="btn btn-primary">Retour à l'accueil</a>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function displayProduct(product) {
+            const inStock = product.stock > 0;
+            const container = document.getElementById('productContainer');
+            
+            container.innerHTML = `
+                <div class="card">
+                    <div class="product-detail">
+                        <div class="product-images">
+                            <img src="/images/${product.image || 'default.jpg'}" alt="${product.name}" class="main-image" id="mainImage">
+
+                        </div>
+
+                        <div class="product-info">
+                            <span class="badge badge-primary">${product.category}</span>
+                            <h1>${product.name}</h1>
+                            
+                            <div class="product-rating">
+                                <span>${'⭐'.repeat(Math.round(product.rating))}</span>
+                                <span>${product.rating.toFixed(1)} (${product.numReviews} avis)</span>
+                            </div>
+
+                            <div class="product-price">${product.price.toFixed(2)} F CFA</div>
+
+                            <div class="product-description">
+                                ${product.description}
+                            </div>
+
+                            <div class="product-meta">
+                                <div class="meta-item">
+                                    <div class="meta-label">Disponibilité</div>
+                                    <div class="meta-value">
+                                        <span class="badge ${inStock ? 'badge-success' : 'badge-danger'}">
+                                            ${inStock ? `✅ ${product.stock} en stock` : '❌ Épuisé'}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="meta-item">
+                                    <div class="meta-label">Catégorie</div>
+                                    <div class="meta-value">${product.category}</div>
+                                </div>
+                            </div>
+
+                            ${inStock ? `
+                                <div class="quantity-selector">
+                                    <label style="font-weight: bold;">Quantité :</label>
+                                    <button class="quantity-btn" onclick="changeQuantity(-1)">−</button>
+                                    <input type="number" id="quantity" class="quantity-input" value="1" min="1" max="${product.stock}">
+                                    <button class="quantity-btn" onclick="changeQuantity(1)">+</button>
+                                </div>
+
+                                <div class="action-buttons">
+                                    <button class="btn btn-success" onclick="addToCart()">
+                                        🛒 Ajouter au Panier
+                                    </button>
+                                    <button class="btn btn-primary" onclick="buyNow()">
+                                        ⚡ Acheter Maintenant
+                                    </button>
+                                </div>
+                            ` : `
+                                <div class="alert" style="padding: 1rem; background: #ffebee; border-radius: 8px; color: var(--danger);">
+                                    ❌ Ce produit est actuellement en rupture de stock
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function changeQuantity(delta) {
+            const input = document.getElementById('quantity');
+            let value = parseInt(input.value) + delta;
+            value = Math.max(1, Math.min(value, currentProduct.stock));
+            input.value = value;
+        }
+
+        function addToCart() {
+            const quantity = parseInt(document.getElementById('quantity').value);
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            
+            const existingItem = cart.find(item => item.productId === currentProduct._id);
+            
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                cart.push({
+                    productId: currentProduct._id,
+                    name: currentProduct.name,
+                    price: currentProduct.price,
+                    image: currentProduct.image,
+                    quantity: quantity
+                });
+            }
+            
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+            
+            alert(`✅ ${quantity} ${currentProduct.name} ajouté(s) au panier !`);
+        }
+
+        function buyNow() {
+            addToCart();
+            window.location.href = '/cart';
+        }
+
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+
+        // Reviews
+        async function loadReviews(productId) {
+            try {
+                const response = await fetch(`/api/reviews/product/${productId}`);
+                const reviews = await response.json();
+                displayReviews(reviews);
+                document.getElementById('reviewCount').textContent = reviews.length;
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+
+        function displayReviews(reviews) {
+            const container = document.getElementById('reviewsList');
+            
+            if (reviews.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>Aucun avis pour le moment. Soyez le premier !</p></div>';
+                return;
+            }
+
+            container.innerHTML = reviews.map(review => `
+                <div class="review-item">
+                    <div class="review-header">
+                        <div>
+                            <div class="review-author">👤 ${review.customerName}</div>
+                            <div class="review-rating">${'⭐'.repeat(review.rating)}</div>
+                        </div>
+                        <div class="review-date">
+                            ${new Date(review.createdAt).toLocaleDateString('fr-FR')}
+                        </div>
+                    </div>
+                    <div>${review.comment}</div>
+                </div>
+            `).join('');
+        }
+
+        // Submit review
+        document.getElementById('reviewForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!selectedRating) {
+                alert('⚠️ Veuillez sélectionner une note');
+                return;
+            }
+            
+            const review = {
+                productId: currentProduct._id,
+                customerName: document.getElementById('customerName').value,
+                rating: selectedRating,
+                comment: document.getElementById('comment').value
+            };
+
+            try {
+                const response = await fetch('/api/reviews', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(review)
+                });
+
+                if (response.ok) {
+                    alert('✅ Avis publié avec succès !');
+                    document.getElementById('reviewForm').reset();
+                    selectedRating = 0;
+                    document.querySelectorAll('.star-btn').forEach(star => star.classList.remove('active'));
+                    loadReviews(currentProduct._id);
+                    loadProduct(currentProduct._id);
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('❌ Erreur lors de la publication de l\'avis');
+            }
+        });
+    </script>
+</body>
+</html>

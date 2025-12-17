@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevBlog - Blog Technique et DevOps</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>ShopCI/CD - E-Commerce</title>
+    <link rel="stylesheet" href="/styles.css">
     <style>
         /* Hero Section */
         .hero {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9)),
-                        url('https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=1200') center/cover;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.95), rgba(118, 75, 162, 0.95)),
+                        url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200') center/cover;
             color: white;
-            padding: 6rem 2rem;
+            padding: 5rem 2rem;
             text-align: center;
             margin-bottom: 3rem;
+            border-radius: 0 0 30px 30px;
         }
 
         .hero h1 {
@@ -28,42 +29,49 @@
             opacity: 0.95;
         }
 
-        /* Search Bar */
-        .search-container {
-            max-width: 600px;
-            margin: 0 auto 2rem;
-            position: relative;
+        /* Search and Filters */
+        .search-filter-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .search-input {
-            width: 100%;
-            padding: 15px 50px 15px 20px;
-            border: none;
-            border-radius: 50px;
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
             font-size: 1em;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
         }
 
-        .search-btn {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 50px;
-            cursor: pointer;
+        .filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filters select {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
         }
 
         /* Categories */
         .categories {
             display: flex;
             gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 3rem;
+            overflow-x: auto;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
         }
 
         .category-btn {
@@ -73,6 +81,7 @@
             color: var(--primary);
             border-radius: 25px;
             cursor: pointer;
+            white-space: nowrap;
             transition: all 0.3s;
             font-weight: 500;
         }
@@ -84,200 +93,12 @@
             transform: translateY(-2px);
         }
 
-        /* Sidebar and Main Layout */
-        .content-wrapper {
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        /* Article Grid */
-        .articles-grid {
-            display: grid;
-            gap: 2rem;
-        }
-
-        .article-card {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-            display: grid;
-            grid-template-columns: 300px 1fr;
-        }
-
-        .article-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        .article-image {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-        }
-
-        .article-content {
-            padding: 2rem;
-        }
-
-        .article-meta {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            font-size: 0.9em;
-            color: var(--gray);
-        }
-
-        .article-title {
-            font-size: 1.8em;
-            color: var(--dark);
-            margin-bottom: 1rem;
-            line-height: 1.3;
-        }
-
-        .article-excerpt {
-            color: #666;
-            margin-bottom: 1.5rem;
-            line-height: 1.6;
-        }
-
-        .article-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .article-stats {
-            display: flex;
-            gap: 1.5rem;
-            font-size: 0.9em;
-            color: var(--gray);
-        }
-
-        /* Sidebar */
-        .sidebar {
-            position: sticky;
-            top: 100px;
-            height: fit-content;
-        }
-
-        .sidebar-card {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-
-        .sidebar-card h3 {
-            color: var(--dark);
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--primary);
-        }
-
-        .popular-article {
-            padding: 1rem 0;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .popular-article:last-child {
-            border-bottom: none;
-        }
-
-        .popular-article:hover {
-            background: #f8f9fa;
-        }
-
-        .popular-article-title {
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 0.5rem;
-        }
-
-        .popular-article-meta {
-            font-size: 0.85em;
-            color: var(--gray);
-        }
-
-        /* Stats Card */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .stat-item {
-            text-align: center;
-            padding: 1rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            border-radius: 10px;
-        }
-
-        .stat-number {
+        /* Featured Products */
+        .section-title {
             font-size: 2em;
-            font-weight: bold;
-            display: block;
-        }
-
-        .stat-label {
-            font-size: 0.85em;
-            opacity: 0.9;
-        }
-
-        /* Pagination */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin: 3rem 0;
-        }
-
-        .page-btn {
-            padding: 10px 20px;
-            background: white;
-            border: 2px solid var(--primary);
-            color: var(--primary);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .page-btn:hover,
-        .page-btn.active {
-            background: var(--primary);
-            color: white;
-        }
-
-        .page-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .content-wrapper {
-                grid-template-columns: 1fr;
-            }
-
-            .sidebar {
-                position: static;
-            }
-
-            .article-card {
-                grid-template-columns: 1fr;
-            }
-
-            .article-image {
-                height: 200px;
-            }
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            text-align: center;
         }
 
         @media (max-width: 768px) {
@@ -289,8 +110,8 @@
                 font-size: 1em;
             }
 
-            .stats-grid {
-                grid-template-columns: 1fr;
+            .filters {
+                flex-direction: column;
             }
         }
     </style>
@@ -299,265 +120,184 @@
     <!-- Navigation -->
     <nav>
         <div class="nav-container">
-            <a href="/" class="logo">📚 DevBlog</a>
+            <a href="/" class="logo">🛒 Crital SHOP</a>
             <ul class="nav-links">
-                <li><a href="/">Accueil</a></li>
-                <li><a href="/admin">Admin</a></li>
-                <li><a href="/create">✍️ Écrire</a></li>
+                <li><a href="/">🏠 Accueil</a></li>
+                <li><a href="/cart">🛒 Panier <span class="cart-badge" id="cartCount">0</span></a></li>
+                <li><a href="/orders">📦 Commandes</a></li>
+                <li><a href="/admin">⚙️ Admin</a></li>
             </ul>
         </div>
     </nav>
 
     <!-- Hero Section -->
     <section class="hero">
-        <h1>🚀 Blog DevOps & Tech</h1>
-        <p>Explorez les dernières actualités et tutoriels sur le DevOps, le Cloud et la programmation</p>
-        
-        <div class="search-container">
-            <input type="text" id="searchInput" class="search-input" placeholder="Rechercher un article...">
-            <button class="search-btn" onclick="searchArticles()">🔍</button>
-        </div>
+        <h1>🛍️ Bienvenue à Cristal SHOP</h1>
+        <p>Découvrez nos produits pour votre plaisir</p>
+        <button class="btn btn-primary" onclick="document.getElementById('products').scrollIntoView({ behavior: 'smooth' })">
+            Explorer les Produits →
+        </button>
     </section>
 
-    <!-- Categories -->
     <div class="container">
-        <div class="categories" id="categories">
-            <button class="category-btn active" onclick="filterByCategory('Toutes')">Toutes</button>
-            <button class="category-btn" onclick="filterByCategory('Technologie')">Technologie</button>
-            <button class="category-btn" onclick="filterByCategory('DevOps')">DevOps</button>
-            <button class="category-btn" onclick="filterByCategory('Programmation')">Programmation</button>
-            <button class="category-btn" onclick="filterByCategory('Cloud')">Cloud</button>
-            <button class="category-btn" onclick="filterByCategory('Sécurité')">Sécurité</button>
-        </div>
-
-        <!-- Content Wrapper -->
-        <div class="content-wrapper">
-            <!-- Main Content -->
-            <div>
-                <div id="articlesContainer" class="articles-grid">
-                    <div class="loading">⏳ Chargement des articles...</div>
-                </div>
-
-                <!-- Pagination -->
-                <div class="pagination" id="pagination"></div>
+        <!-- Search and Filters -->
+        <div class="search-filter-section">
+            <div class="search-bar">
+                <input type="text" id="searchInput" class="search-input" placeholder="Rechercher un produit...">
+                <button class="btn btn-primary" onclick="loadProducts()">🔍 Rechercher</button>
             </div>
 
-            <!-- Sidebar -->
-            <aside class="sidebar">
-                <!-- Stats -->
-                <div class="sidebar-card">
-                    <h3>📊 Statistiques</h3>
-                    <div class="stats-grid" id="statsContainer">
-                        <div class="stat-item">
-                            <span class="stat-number" id="totalArticles">0</span>
-                            <span class="stat-label">Articles</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number" id="totalViews">0</span>
-                            <span class="stat-label">Vues</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="filters">
+                <select id="categoryFilter" onchange="loadProducts()">
+                    <option value="">Toutes les catégories</option>
+                    <option value="Électronique">📱 Électronique</option>
+                    <option value="Vêtements">👕 Vêtements</option>
+                    <option value="Livres">📚 Livres</option>
+                    <option value="Maison">🏠 Maison</option>
+                    <option value="Sport">⚽ Sport</option>
+                </select>
 
-                <!-- Popular Articles -->
-                <div class="sidebar-card">
-                    <h3>🔥 Articles Populaires</h3>
-                    <div id="popularArticles"></div>
-                </div>
+                <select id="sortFilter" onchange="loadProducts()">
+                    <option value="">Trier par...</option>
+                    <option value="price-asc">Prix croissant</option>
+                    <option value="price-desc">Prix décroissant</option>
+                    <option value="name">Nom A-Z</option>
+                </select>
 
-                <!-- Recent Articles -->
-                <div class="sidebar-card">
-                    <h3>🆕 Articles Récents</h3>
-                    <div id="recentArticles"></div>
-                </div>
-            </aside>
+                <input type="number" id="minPrice" placeholder="Prix min" style="width: 120px; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                <input type="number" id="maxPrice" placeholder="Prix max" style="width: 120px; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                <button class="btn btn-secondary" onclick="loadProducts()">Filtrer</button>
+            </div>
         </div>
+
+        <!-- Featured Products -->
+        <section id="featured" style="margin-bottom: 3rem;">
+            <h2 class="section-title">⭐ Produits Vedettes</h2>
+            <div id="featuredProducts" class="products-grid">
+                <div class="loading">⏳ Chargement des produits vedettes...</div>
+            </div>
+        </section>
+
+        <!-- All Products -->
+        <section id="products">
+            <h2 class="section-title">🛍️ Tous nos Produits</h2>
+            <div id="allProducts" class="products-grid">
+                <div class="loading">⏳ Chargement des produits...</div>
+            </div>
+        </section>
     </div>
 
     <script>
-        let currentPage = 1;
-        let currentCategory = 'Toutes';
-        let currentSearch = '';
-
-        // Charger les données au démarrage
+        // Charger au démarrage
         document.addEventListener('DOMContentLoaded', () => {
-            loadArticles();
-            loadStats();
-            loadPopularArticles();
-            loadRecentArticles();
+            loadFeaturedProducts();
+            loadProducts();
+            updateCartCount();
         });
 
-        // Charger les articles
-        async function loadArticles(page = 1) {
+        // Charger les produits vedettes
+        async function loadFeaturedProducts() {
             try {
-                currentPage = page;
-                let url = `/api/articles?page=${page}&limit=5`;
-                
-                if (currentCategory !== 'Toutes') {
-                    url += `&category=${currentCategory}`;
-                }
-                
-                if (currentSearch) {
-                    url += `&search=${currentSearch}`;
-                }
-                
-                const response = await fetch(url);
-                const data = await response.json();
-                
-                displayArticles(data.articles);
-                displayPagination(data.currentPage, data.totalPages);
+                const response = await fetch('/api/products/featured');
+                const products = await response.json();
+                displayFeaturedProducts(products);
             } catch (error) {
                 console.error('Erreur:', error);
-                document.getElementById('articlesContainer').innerHTML = '<div class="empty-state">❌ Erreur de chargement</div>';
             }
         }
 
-        // Afficher les articles
-        function displayArticles(articles) {
-            const container = document.getElementById('articlesContainer');
+        // Afficher les produits vedettes
+        function displayFeaturedProducts(products) {
+            const container = document.getElementById('featuredProducts');
             
-            if (articles.length === 0) {
+            if (products.length === 0) {
+                container.innerHTML = '<div class="empty-state">Aucun produit vedette</div>';
+                return;
+            }
+
+            container.innerHTML = products.map(product => createProductCard(product)).join('');
+        }
+
+        // Charger tous les produits
+        async function loadProducts() {
+            try {
+                const category = document.getElementById('categoryFilter').value;
+                const search = document.getElementById('searchInput').value;
+                const sort = document.getElementById('sortFilter').value;
+                const minPrice = document.getElementById('minPrice').value;
+                const maxPrice = document.getElementById('maxPrice').value;
+
+                let url = '/api/products?';
+                if (category) url += `category=${category}&`;
+                if (search) url += `search=${search}&`;
+                if (sort) url += `sort=${sort}&`;
+                if (minPrice) url += `minPrice=${minPrice}&`;
+                if (maxPrice) url += `maxPrice=${maxPrice}&`;
+
+                const response = await fetch(url);
+                const products = await response.json();
+                displayAllProducts(products);
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+
+        // Afficher tous les produits
+        function displayAllProducts(products) {
+            const container = document.getElementById('allProducts');
+            
+            if (products.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-state-icon">📭</div>
-                        <h3>Aucun article trouvé</h3>
-                        <p>Essayez de modifier vos filtres de recherche</p>
+                        <h3>Aucun produit trouvé</h3>
+                        <p>Essayez de modifier vos filtres</p>
                     </div>
                 `;
                 return;
             }
 
-            container.innerHTML = articles.map(article => `
-                <div class="article-card" onclick="window.location.href='/article/${article.slug}'">
-                    <img src="${article.imageUrl}" alt="${article.title}" class="article-image">
-                    <div class="article-content">
-                        <div class="article-meta">
-                            <span class="badge badge-primary">${article.category}</span>
-                            <span>📅 ${new Date(article.createdAt).toLocaleDateString('fr-FR')}</span>
-                            <span>✍️ ${article.author}</span>
-                        </div>
-                        <h2 class="article-title">${article.title}</h2>
-                        <p class="article-excerpt">${article.excerpt}</p>
-                        <div class="article-footer">
-                            <div class="article-stats">
-                                <span>👁️ ${article.views} vues</span>
-                                <span>❤️ ${article.likes} likes</span>
-                            </div>
-                            <button class="btn btn-primary">Lire plus →</button>
-                        </div>
+            container.innerHTML = products.map(product => createProductCard(product)).join('');
+        }
+
+        // Créer une carte produit
+        function createProductCard(product) {
+    const inStock = product.stock > 0;
+    return `
+        <div class="product-card" onclick="window.location.href='/product/${product._id}'">
+            <img src="/images/${product.image || 'default.jpg'}" alt="${product.name}" class="product-image">
+            <div class="product-content">
+                <div class="product-category">${product.category}</div>
+                <h3 class="product-title">${product.name}</h3>
+                <div class="product-price">${product.price.toFixed(2)} F CFA</div>
+                <div class="product-footer">
+                    <div class="product-rating">
+                        ${'⭐'.repeat(Math.round(product.rating))}
+                        <span>(${product.numReviews})</span>
                     </div>
+                    <span class="badge ${inStock ? 'badge-success' : 'badge-danger'}">
+                        ${inStock ? `${product.stock} en stock` : 'Épuisé'}
+                    </span>
                 </div>
-            `).join('');
+            </div>
+        </div>
+    `;
+}
+
+
+        // Mettre à jour le compteur du panier
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').textContent = count;
         }
 
-        // Afficher la pagination
-        function displayPagination(current, total) {
-            const container = document.getElementById('pagination');
-            
-            if (total <= 1) {
-                container.innerHTML = '';
-                return;
-            }
-
-            let html = `
-                <button class="page-btn" onclick="loadArticles(${current - 1})" ${current === 1 ? 'disabled' : ''}>
-                    ← Précédent
-                </button>
-            `;
-
-            for (let i = 1; i <= total; i++) {
-                html += `
-                    <button class="page-btn ${i === current ? 'active' : ''}" onclick="loadArticles(${i})">
-                        ${i}
-                    </button>
-                `;
-            }
-
-            html += `
-                <button class="page-btn" onclick="loadArticles(${current + 1})" ${current === total ? 'disabled' : ''}>
-                    Suivant →
-                </button>
-            `;
-
-            container.innerHTML = html;
-        }
-
-        // Filtrer par catégorie
-        function filterByCategory(category) {
-            currentCategory = category;
-            
-            // Update active button
-            document.querySelectorAll('.category-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            loadArticles(1);
-        }
-
-        // Rechercher
-        function searchArticles() {
-            currentSearch = document.getElementById('searchInput').value;
-            loadArticles(1);
-        }
-
-        // Enter key for search
+        // Search on Enter
         document.getElementById('searchInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                searchArticles();
+                loadProducts();
             }
         });
-
-        // Charger les stats
-        async function loadStats() {
-            try {
-                const response = await fetch('/api/articles/stats');
-                const stats = await response.json();
-                
-                document.getElementById('totalArticles').textContent = stats.total;
-                document.getElementById('totalViews').textContent = stats.totalViews;
-            } catch (error) {
-                console.error('Erreur stats:', error);
-            }
-        }
-
-        // Charger les articles populaires
-        async function loadPopularArticles() {
-            try {
-                const response = await fetch('/api/articles/popular');
-                const articles = await response.json();
-                
-                document.getElementById('popularArticles').innerHTML = articles.map(article => `
-                    <div class="popular-article" onclick="window.location.href='/article/${article.slug}'">
-                        <div class="popular-article-title">${article.title}</div>
-                        <div class="popular-article-meta">
-                            👁️ ${article.views} vues
-                        </div>
-                    </div>
-                `).join('');
-            } catch (error) {
-                console.error('Erreur:', error);
-            }
-        }
-
-        // Charger les articles récents
-        async function loadRecentArticles() {
-            try {
-                const response = await fetch('/api/articles/recent');
-                const articles = await response.json();
-                
-                document.getElementById('recentArticles').innerHTML = articles.map(article => `
-                    <div class="popular-article" onclick="window.location.href='/article/${article.slug}'">
-                        <div class="popular-article-title">${article.title}</div>
-                        <div class="popular-article-meta">
-                            📅 ${new Date(article.createdAt).toLocaleDateString('fr-FR')}
-                        </div>
-                    </div>
-                `).join('');
-            } catch (error) {
-                console.error('Erreur:', error);
-            }
-        }
     </script>
 </body>
 </html>

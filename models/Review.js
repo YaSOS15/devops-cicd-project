@@ -1,16 +1,22 @@
 const mongoose = require('mongoose');
 
-const commentSchema = new mongoose.Schema({
-  articleId: {
+const reviewSchema = new mongoose.Schema({
+  productId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Article',
+    ref: 'Product',
     required: true
   },
-  author: {
+  customerName: {
     type: String,
     required: true
   },
-  content: {
+  rating: {
+    type: Number,
+    required: true,
+    min: 1,
+    max: 5
+  },
+  comment: {
     type: String,
     required: true
   },
@@ -20,4 +26,4 @@ const commentSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('Comment', commentSchema);
+module.exports = mongoose.model('Review', reviewSchema);

@@ -3,22 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - DevBlog</title>
+    <title>Admin Dashboard - ShopCI/CD</title>
     <link rel="stylesheet" href="/styles.css">
     <style>
-        .admin-header {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            margin-bottom: 2rem;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-
-        .admin-header h1 {
-            color: var(--dark);
-            margin-bottom: 0.5rem;
-        }
-
         .admin-stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -30,47 +17,42 @@
             background: white;
             padding: 2rem;
             border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
             text-align: center;
         }
 
-        .stat-card-icon {
+        .stat-icon {
             font-size: 3em;
             margin-bottom: 1rem;
         }
 
-        .stat-card-number {
-            font-size: 3em;
+        .stat-number {
+            font-size: 2.5em;
             font-weight: bold;
             color: var(--primary);
             margin-bottom: 0.5rem;
         }
 
-        .stat-card-label {
+        .stat-label {
             color: var(--gray);
-            font-size: 1.1em;
+            font-size: 1em;
         }
 
-        .articles-table {
+        .admin-section {
             background: white;
             padding: 2rem;
             border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            overflow-x: auto;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
         }
 
-        .table-header {
+        .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 2rem;
             padding-bottom: 1rem;
             border-bottom: 2px solid var(--primary);
-        }
-
-        .table-actions {
-            display: flex;
-            gap: 1rem;
         }
 
         table {
@@ -102,8 +84,7 @@
             background: #f8f9fa;
         }
 
-        .article-title-cell {
-            max-width: 300px;
+        .product-name-cell {
             font-weight: 600;
             color: var(--dark);
         }
@@ -118,36 +99,35 @@
             font-size: 0.9em;
         }
 
-        .status-badge {
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: bold;
-        }
-
-        .status-published {
-            background: #e8f5e9;
-            color: var(--success);
-        }
-
-        .status-draft {
-            background: #fff3e0;
-            color: var(--warning);
-        }
-
-        .filter-section {
+        .tabs {
             display: flex;
             gap: 1rem;
             margin-bottom: 2rem;
-            flex-wrap: wrap;
         }
 
-        .filter-section select,
-        .filter-section input {
-            padding: 10px 15px;
-            border: 2px solid #e0e0e0;
+        .tab-btn {
+            padding: 12px 30px;
+            background: white;
+            border: 2px solid var(--primary);
+            color: var(--primary);
             border-radius: 8px;
-            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .tab-btn:hover,
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
         }
 
         @media (max-width: 768px) {
@@ -159,9 +139,8 @@
                 font-size: 0.9em;
             }
 
-            .btn-small {
-                padding: 6px 12px;
-                font-size: 0.8em;
+            .action-buttons {
+                flex-direction: column;
             }
         }
     </style>
@@ -170,134 +149,128 @@
     <!-- Navigation -->
     <nav>
         <div class="nav-container">
-            <a href="/" class="logo">📚 DevBlog</a>
+            <a href="/" class="logo">🛒 Cristal SHOP</a>
             <ul class="nav-links">
-                <li><a href="/">Accueil</a></li>
-                <li><a href="/admin">Admin</a></li>
-                <li><a href="/create">✍️ Écrire</a></li>
+                <li><a href="/">🏠 Accueil</a></li>
+                <li><a href="/cart">🛒 Panier <span class="cart-badge" id="cartCount">0</span></a></li>
+                <li><a href="/orders">📦 Commandes</a></li>
+                <li><a href="/admin">⚙️ Admin</a></li>
             </ul>
         </div>
     </nav>
 
     <div class="container">
-        <!-- Header -->
-        <div class="admin-header">
-            <h1>⚙️ Dashboard Admin</h1>
-            <p>Gérez tous vos articles depuis cette interface</p>
-        </div>
+        <h1 style="margin-bottom: 2rem;">⚙️ Administrateur</h1>
 
         <!-- Statistics -->
         <div class="admin-stats">
             <div class="stat-card">
-                <div class="stat-card-icon">📝</div>
-                <div class="stat-card-number" id="totalArticles">0</div>
-                <div class="stat-card-label">Total Articles</div>
+                <div class="stat-icon">📦</div>
+                <div class="stat-number" id="totalProducts">0</div>
+                <div class="stat-label">Total Produits</div>
             </div>
             <div class="stat-card">
-                <div class="stat-card-icon">✅</div>
-                <div class="stat-card-number" id="publishedArticles">0</div>
-                <div class="stat-card-label">Publiés</div>
+                <div class="stat-icon">✅</div>
+                <div class="stat-number" id="inStock">0</div>
+                <div class="stat-label">En Stock</div>
             </div>
             <div class="stat-card">
-                <div class="stat-card-icon">📋</div>
-                <div class="stat-card-number" id="draftArticles">0</div>
-                <div class="stat-card-label">Brouillons</div>
+                <div class="stat-icon">🛒</div>
+                <div class="stat-number" id="totalOrders">0</div>
+                <div class="stat-label">Commandes</div>
             </div>
             <div class="stat-card">
-                <div class="stat-card-icon">👁️</div>
-                <div class="stat-card-number" id="totalViews">0</div>
-                <div class="stat-card-label">Total Vues</div>
+                <div class="stat-icon">💰</div>
+                <div class="stat-number" id="totalRevenue">0 F CFA</div>
+                <div class="stat-label">Chiffre d'Affaires</div>
             </div>
         </div>
 
-        <!-- Articles Table -->
-        <div class="articles-table">
-            <div class="table-header">
-                <h2>📚 Gestion des Articles</h2>
-                <div class="table-actions">
-                    <a href="/create" class="btn btn-success">➕ Nouvel Article</a>
-                    <button class="btn btn-secondary" onclick="loadArticles()">🔄 Actualiser</button>
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('products')">📦 Produits</button>
+            <button class="tab-btn" onclick="switchTab('orders')">🛒 Commandes</button>
+        </div>
+
+        <!-- Products Tab -->
+        <div id="productsTab" class="tab-content active">
+            <div class="admin-section">
+                <div class="section-header">
+                    <h2>📦 Gestion des Produits</h2>
+                    <div style="display: flex; gap: 1rem;">
+                        <a href="/admin/add-product" class="btn btn-success">➕ Nouveau Produit</a>
+                        <button class="btn btn-secondary" onclick="loadProducts()">🔄 Actualiser</button>
+                    </div>
+                </div>
+
+                <div id="productsContainer">
+                    <div class="loading">⏳ Chargement...</div>
                 </div>
             </div>
+        </div>
 
-            <!-- Filters -->
-            <div class="filter-section">
-                <select id="categoryFilter" onchange="filterArticles()">
-                    <option value="">Toutes les catégories</option>
-                    <option value="Technologie">Technologie</option>
-                    <option value="DevOps">DevOps</option>
-                    <option value="Programmation">Programmation</option>
-                    <option value="Cloud">Cloud</option>
-                    <option value="Sécurité">Sécurité</option>
-                </select>
+        <!-- Orders Tab -->
+        <div id="ordersTab" class="tab-content">
+            <div class="admin-section">
+                <div class="section-header">
+                    <h2>🛒 Gestion des Commandes</h2>
+                    <button class="btn btn-secondary" onclick="loadOrders()">🔄 Actualiser</button>
+                </div>
 
-                <select id="statusFilter" onchange="filterArticles()">
-                    <option value="">Tous les statuts</option>
-                    <option value="published">Publiés</option>
-                    <option value="draft">Brouillons</option>
-                </select>
-
-                <input type="text" id="searchFilter" placeholder="Rechercher..." onkeyup="filterArticles()">
-            </div>
-
-            <!-- Table -->
-            <div id="tableContainer">
-                <div class="loading">⏳ Chargement des articles...</div>
+                <div id="ordersContainer">
+                    <div class="loading">⏳ Chargement...</div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        let allArticles = [];
-
-        // Charger au démarrage
         document.addEventListener('DOMContentLoaded', () => {
             loadStats();
-            loadArticles();
+            loadProducts();
+            loadOrders();
+            updateCartCount();
         });
 
-        // Charger les stats
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tab + 'Tab').classList.add('active');
+        }
+
         async function loadStats() {
             try {
-                const response = await fetch('/api/articles/stats');
-                const stats = await response.json();
-                
-                document.getElementById('totalArticles').textContent = stats.total;
-                document.getElementById('publishedArticles').textContent = stats.published;
-                document.getElementById('draftArticles').textContent = stats.draft;
-                document.getElementById('totalViews').textContent = stats.totalViews;
+                const [productsStats, ordersStats] = await Promise.all([
+                    fetch('/api/products/stats').then(r => r.json()),
+                    fetch('/api/orders/stats').then(r => r.json())
+                ]);
+
+                document.getElementById('totalProducts').textContent = productsStats.total;
+                document.getElementById('inStock').textContent = productsStats.inStock;
+                document.getElementById('totalOrders').textContent = ordersStats.total;
+                document.getElementById('totalRevenue').textContent = ordersStats.totalRevenue.toFixed(2) + ' F CFA';
             } catch (error) {
                 console.error('Erreur:', error);
             }
         }
 
-        // Charger tous les articles
-        async function loadArticles() {
+        async function loadProducts() {
             try {
-                const response = await fetch('/api/articles?limit=1000');
-                const data = await response.json();
-                allArticles = data.articles;
-                displayArticles(allArticles);
+                const response = await fetch('/api/products');
+                const products = await response.json();
+                displayProducts(products);
             } catch (error) {
                 console.error('Erreur:', error);
-                document.getElementById('tableContainer').innerHTML = 
-                    '<div class="empty-state">❌ Erreur de chargement</div>';
             }
         }
 
-        // Afficher les articles
-        function displayArticles(articles) {
-            const container = document.getElementById('tableContainer');
-            
-            if (articles.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📭</div>
-                        <h3>Aucun article</h3>
-                        <p>Commencez par créer votre premier article</p>
-                        <a href="/create" class="btn btn-primary">Créer un article</a>
-                    </div>
-                `;
+        function displayProducts(products) {
+            const container = document.getElementById('productsContainer');
+
+            if (products.length === 0) {
+                container.innerHTML = '<div class="empty-state">Aucun produit</div>';
                 return;
             }
 
@@ -305,40 +278,36 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Titre</th>
+                            <th>Produit</th>
                             <th>Catégorie</th>
-                            <th>Auteur</th>
-                            <th>Statut</th>
-                            <th>Vues</th>
-                            <th>Likes</th>
-                            <th>Date</th>
+                            <th>Prix</th>
+                            <th>Stock</th>
+                            <th>Note</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${articles.map(article => `
+                        ${products.map(product => `
                             <tr>
-                                <td class="article-title-cell">${article.title}</td>
-                                <td><span class="badge badge-primary">${article.category}</span></td>
-                                <td>${article.author}</td>
+                                <td class="product-name-cell">${product.name}</td>
+                                <td><span class="badge badge-primary">${product.category}</span></td>
+                                <td>${product.price.toFixed(2)} F CFA</td>
                                 <td>
-                                    <span class="status-badge ${article.published ? 'status-published' : 'status-draft'}">
-                                        ${article.published ? '✅ Publié' : '📋 Brouillon'}
+                                    <span class="badge ${product.stock > 0 ? 'badge-success' : 'badge-danger'}">
+                                        ${product.stock}
                                     </span>
                                 </td>
-                                <td>👁️ ${article.views}</td>
-                                <td>❤️ ${article.likes}</td>
-                                <td>${new Date(article.createdAt).toLocaleDateString('fr-FR')}</td>
+                                <td>${'⭐'.repeat(Math.round(product.rating))} (${product.numReviews})</td>
                                 <td>
                                     <div class="action-buttons">
-                                        <button class="btn btn-primary btn-small" onclick="viewArticle('${article.slug}')">
-                                            👁️ Voir
+                                        <button class="btn btn-primary btn-small" onclick="window.location.href='/product/${product._id}'">
+                                            👁️
                                         </button>
-                                        <button class="btn btn-secondary btn-small" onclick="editArticle('${article._id}')">
-                                            ✏️ Modifier
+                                        <button class="btn btn-secondary btn-small" onclick="window.location.href='/admin/edit-product/${product._id}'">
+                                            ✏️
                                         </button>
-                                        <button class="btn btn-danger btn-small" onclick="deleteArticle('${article._id}', '${article.title}')">
-                                            🗑️ Supprimer
+                                        <button class="btn btn-danger btn-small" onclick="deleteProduct('${product._id}', '${product.name}')">
+                                            🗑️
                                         </button>
                                     </div>
                                 </td>
@@ -349,60 +318,119 @@
             `;
         }
 
-        // Filtrer les articles
-        function filterArticles() {
-            const categoryFilter = document.getElementById('categoryFilter').value;
-            const statusFilter = document.getElementById('statusFilter').value;
-            const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
-
-            let filtered = allArticles.filter(article => {
-                const matchCategory = !categoryFilter || article.category === categoryFilter;
-                const matchStatus = !statusFilter || 
-                    (statusFilter === 'published' && article.published) ||
-                    (statusFilter === 'draft' && !article.published);
-                const matchSearch = !searchFilter || 
-                    article.title.toLowerCase().includes(searchFilter) ||
-                    article.content.toLowerCase().includes(searchFilter);
-
-                return matchCategory && matchStatus && matchSearch;
-            });
-
-            displayArticles(filtered);
-        }
-
-        // Voir un article
-        function viewArticle(slug) {
-            window.location.href = `/article/${slug}`;
-        }
-
-        // Modifier un article
-        function editArticle(id) {
-            window.location.href = `/edit/${id}`;
-        }
-
-        // Supprimer un article
-        async function deleteArticle(id, title) {
-            if (!confirm(`Êtes-vous sûr de vouloir supprimer l'article "${title}" ?\n\nCette action est irréversible.`)) {
-                return;
-            }
+        async function deleteProduct(id, name) {
+            if (!confirm(`Supprimer le produit "${name}" ?`)) return;
 
             try {
-                const response = await fetch(`/api/articles/${id}`, {
-                    method: 'DELETE'
-                });
-
+                const response = await fetch(`/api/products/${id}`, { method: 'DELETE' });
                 if (response.ok) {
-                    alert('✅ Article supprimé avec succès !');
-                    loadStats();
-                    loadArticles();
-                } else {
-                    alert('❌ Erreur lors de la suppression');
-                }
-            } catch (error) {
-                console.error('Erreur:', error);
-                alert('❌ Erreur lors de la suppression');
+                    alert('✅ Produit supprimé');
+                    
+loadProducts();
+                loadStats();
             }
+        } catch (error) {
+            console.error('Erreur:', error);
+            alert('❌ Erreur lors de la suppression');
         }
-    </script>
+    }
+
+    async function loadOrders() {
+        try {
+            const response = await fetch('/api/orders');
+            const orders = await response.json();
+            displayOrders(orders);
+        } catch (error) {
+            console.error('Erreur:', error);
+        }
+    }
+
+    function displayOrders(orders) {
+        const container = document.getElementById('ordersContainer');
+
+        if (orders.length === 0) {
+            container.innerHTML = '<div class="empty-state">Aucune commande</div>';
+            return;
+        }
+
+        container.innerHTML = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Numéro</th>
+                        <th>Client</th>
+                        <th>Articles</th>
+                        <th>Total</th>
+                        <th>Statut</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${orders.map(order => `
+                        <tr>
+                            <td style="font-weight: 600;">${order.orderNumber}</td>
+                            <td>${order.customerName}</td>
+                            <td>${order.items.length} article(s)</td>
+                            <td style="font-weight: bold; color: var(--primary);">${order.totalAmount.toFixed(2)} F CFA</td>
+                            <td>
+                                <select onchange="updateOrderStatus('${order._id}', this.value)" class="badge">
+                                    ${['En attente', 'Confirmée', 'Expédiée', 'Livrée', 'Annulée'].map(status => 
+                                        `<option value="${status}" ${status === order.status ? 'selected' : ''}>${status}</option>`
+                                    ).join('')}
+                                </select>
+                            </td>
+                            <td>${new Date(order.createdAt).toLocaleDateString('fr-FR')}</td>
+                            <td>
+                                <button class="btn btn-danger btn-small" onclick="deleteOrder('${order._id}')">
+                                    🗑️
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+
+    async function updateOrderStatus(id, status) {
+        try {
+            const response = await fetch(`/api/orders/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status })
+            });
+
+            if (response.ok) {
+                alert('✅ Statut mis à jour');
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+            alert('❌ Erreur');
+        }
+    }
+
+    async function deleteOrder(id) {
+        if (!confirm('Supprimer cette commande ?')) return;
+
+        try {
+            const response = await fetch(`/api/orders/${id}`, { method: 'DELETE' });
+            if (response.ok) {
+                alert('✅ Commande supprimée');
+                loadOrders();
+                loadStats();
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+            alert('❌ Erreur');
+        }
+    }
+
+    function updateCartCount() {
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+        document.getElementById('cartCount').textContent = count;
+    }
+</script>
 </body>
 </html>
